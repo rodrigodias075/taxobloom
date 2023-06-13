@@ -1,6 +1,7 @@
 namespace WebAppBloom.Contexts;
 using WebAppBloom.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAppBloom.EntityConfigs;
 
 
 //Contexto = Banco
@@ -16,6 +17,11 @@ public DbSet<Competencia> Competencias => Set<Competencia>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer("Server=LAB-F08-11;Database=WebAppBloom;User Id=sa;Password=senai@123;TrustServerCertificate=True;");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new CompetenciaEntityConfig());
     }
 
 }

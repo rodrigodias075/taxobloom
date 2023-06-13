@@ -1,12 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using WebAppBloom.Models;
 using WebAppBloom.ViewModels;
+using WebAppBloom.Contexts;
 namespace WebAppBloom.Controllers;
 
 
 public class CompetenciaController : Controller
 {
 
+
+private readonly AppDbContext _context;
+public CompetenciaController(AppDbContext context){
+_context = context;
+}
+   /*
     public IActionResult Index()
     {
 
@@ -33,6 +40,8 @@ public class CompetenciaController : Controller
             Competencia = competencia,
             TituloPagina = "Página de Teste"
         };
+        */
+        var competencias = _context.Competencias.ToList();
         return View(viewModel);
 
     }
