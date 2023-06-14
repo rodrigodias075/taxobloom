@@ -1,0 +1,28 @@
+@model ListaCompetenciaViewModels
+<h1>Listando Competências</h1>
+<table>
+
+    @{
+        var colunaBloomItens = Model.Competencia.Select(item => item.ColunaBloom).ToList();
+        var linhaBloomItens = Model.Competencia.Select(item => item.LinhaBloom).ToList();
+    }
+    <tr>
+         <th>Coluna Bloom</th>
+        <td></td>
+        <td class="horizontal-row">@string.Join(" | ", colunaBloomItens)</td>
+        <td></td>
+    </tr>
+    <tr>
+         <th>Linha Bloom</th>
+        <td></td>
+        <td class="horizontal-row">@string.Join(" | ", linhaBloomItens)</td>
+        <td></td>
+    </tr>
+
+</table>
+
+<style>
+    .horizontal-row {
+        white-space: nowrap;
+    }
+</style>
