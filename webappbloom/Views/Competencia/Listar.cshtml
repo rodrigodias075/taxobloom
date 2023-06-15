@@ -1,28 +1,125 @@
 @model ListaCompetenciaViewModels
+@{
+    List<string> colunaBloomItens = new List<string>();
+    List<string> linhaBloomItens = new List<string>();
+    
+    foreach (var item in Model.Competencia)
+    {
+        if (item.ColunaBloom != null)
+        {
+            colunaBloomItens.Add(item.ColunaBloom);
+        }
+        
+        if (item.LinhaBloom != null)
+        {
+            linhaBloomItens.Add(item.LinhaBloom);
+        }
+    }
+
+    int maxItemCount = Math.Max(colunaBloomItens.Count, linhaBloomItens.Count);
+    int rowCount = (int)Math.Ceiling((double)linhaBloomItens.Count / 6); // Calcula o número de linhas necessárias
+
+    List<List<string>> linhaBloomItensPorLinha = new List<List<string>>();
+    for (int i = 0; i < rowCount; i++)
+    {
+        linhaBloomItensPorLinha.Add(linhaBloomItens.Skip(i * 6).Take(6).ToList());
+    }
+}
+
 <h1>Listando Competências</h1>
 <table>
-
-    @{
-        var colunaBloomItens = Model.Competencia.Select(item => item.ColunaBloom).ToList();
-        var linhaBloomItens = Model.Competencia.Select(item => item.LinhaBloom).ToList();
+    <tr>
+        <th class="coluna-bloom-header">Coluna Bloom</th>
+        @for (int i = 0; i < 6; i++) // Limita o número de colunas para 6
+        {
+            <td class="horizontal-row" style="background-color: @GetColumnBackgroundColor(i)">
+                @if (i < colunaBloomItens.Count)
+                {
+                    <div class="square-cell">@Html.Raw(SplitWordsWithColors(colunaBloomItens[i], -1))</div>
+                }
+            </td>
+        }
+    </tr>
+    
+    @for (int i = 0; i < rowCount; i++)
+    {
+        <tr>
+            <th>Linha Bloom</th>
+            @foreach (var item in linhaBloomItensPorLinha[i].Take(6)) // Limita o número de itens por linha para 6
+            {
+                <td class="horizontal-row">
+                    <div class="square-cell" style="background-color: @GetRowBackgroundColor(i)">@Html.Raw(SplitWordsWithColors(item, i))</div>
+                </td>
+            }
+            @if (linhaBloomItensPorLinha[i].Count < 6)
+            {
+                for (int j = 0; j < 6 - linhaBloomItensPorLinha[i].Count; j++)
+                {
+                    <td></td>
+                }
+            }
+        </tr>
     }
-    <tr>
-         <th>Coluna Bloom</th>
-        <td></td>
-        <td class="horizontal-row">@string.Join(" | ", colunaBloomItens)</td>
-        <td></td>
-    </tr>
-    <tr>
-         <th>Linha Bloom</th>
-        <td></td>
-        <td class="horizontal-row">@string.Join(" | ", linhaBloomItens)</td>
-        <td></td>
-    </tr>
-
 </table>
 
 <style>
+    table {
+        margin: 20px 0;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 5px solid #000000;
+    }
+
+    th {
+        font-weight: bold;
+    }
+
     .horizontal-row {
         white-space: nowrap;
     }
+
+    .coluna-bloom-header {
+        font-family: 'Arial', sans-serif;
+    }
+
+ 
+
+    @functions {
+        public string GetColumnBackgroundColor(int index)
+        {
+            string[] colors = { "#00c3ff", "#0e793bc4", "rgba(66, 66, 196, 0.822)", "#ff9100", "#ff009d", "#db322c" };
+            return colors[index % colors.Length];
+        }
+
+        public string GetRowBackgroundColor(int index)
+        {
+            string[] colors = { "#e3f2fd", "#e8f5e9", "#fff8e1", "#ffebee", "#f3e5f5", "#fce4ec" };
+            return colors[index % colors.Length];
+        }
+
+        public string SplitWordsWithColors(string input, int index)
+        {
+            var words = input.Split(' ');
+            var output = "";
+            for (int i = 0; i < words.Length; i++)
+            {
+                int colorIndex = (index >= 0) ? ((index * words.Length) + i) % 6 + 1 : 0;
+                output += $"<span class=\"word-color-{colorIndex}\">{words[i]}</span> ";
+            }
+            return output.TrimEnd();
+        }
+    }
+
+    /* Defina as cores desejadas para cada palavra */
+    .word-color-1 { color: #00c3ff; }
+    .word-color-2 { color: #0e793bc4; }
+    .word-color-3 { color: rgba(66, 66, 196, 0.822); }
+    .word-color-4 { color: #ff9100; }
+    .word-color-5 { color: #ff009d; }
+    .word-color-6 { color: #db322c; }
 </style>
